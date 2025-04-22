@@ -5,6 +5,7 @@ import com.example.taskmanager.dto.UserDTO;
 import com.example.taskmanager.entity.User;
 import com.example.taskmanager.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -27,7 +28,11 @@ public class UserService {
         userRepository.deleteById(id);
     }
 
-    public List<User> getAllUsers() {
-        return userRepository.findAll();
+    public Page<User> getFilteredUsers(String firstName, String lastName, Pageable pageable) {
+        List<User> all = userRepository.findAll();
+        return new PageImpl<>(all.stream()
+                .filter(u -> firstName == null || u.getFirstName().toLowerCase().contains(firstName.toLowerCase()))
+                .filter(u -> lastName == null || u.getLastName().toLowerCase().contains(lastName.toLowerCase()))
+                .toList(), pageable, all.size());
     }
 }

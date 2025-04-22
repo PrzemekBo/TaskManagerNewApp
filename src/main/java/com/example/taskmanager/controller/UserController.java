@@ -6,9 +6,9 @@ import com.example.taskmanager.entity.User;
 import com.example.taskmanager.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/users")
@@ -27,7 +27,9 @@ public class UserController {
     }
 
     @GetMapping
-    public List<User> all() {
-        return userService.getAllUsers();
+    public Page<User> all(@RequestParam(required = false) String firstName,
+                          @RequestParam(required = false) String lastName,
+                          Pageable pageable) {
+        return userService.getFilteredUsers(firstName, lastName, pageable);
     }
 }
